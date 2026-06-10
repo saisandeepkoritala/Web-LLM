@@ -20,17 +20,23 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false); 
-  // Separate loading state for initial fetch
   const [history, setHistory] = useState<ChatExchange[]>([]);
   const chatRef = useRef<HTMLDivElement | null>(null);
   const { id, email } = useSelector((state: any) => state.user.userInfo);
 
   // Smooth scroll to bottom on new history entries or loading indicators
   useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [isLoading, history.length]); // Track array length instead of the full array object
+    if (!chatRef.current) return;
+
+    const scrollTimeout = setTimeout(() => {
+      chatRef.current?.scrollIntoView({ 
+        behavior: "smooth", 
+        block: "end"
+      });
+    }, 100);
+
+    return () => clearTimeout(scrollTimeout);
+  }, [isLoading, history.length]);
 
   // Fetch initial history safely
   useEffect(() => {
@@ -150,7 +156,7 @@ export default function App() {
                 </Badge>
               </div>
 
-              {/* Answer Content Block (Changed from <p> to <div> to avoid HTML tree nesting validation errors) */}
+              {/* Answer Content Block */}
               <CardContent className="pt-5 pb-6 space-y-4">
                 <div className="text-neutral-700 dark:text-neutral-300 leading-relaxed content-markdown">
                   <MarkdownRenderer>{exchange.answer}</MarkdownRenderer>
@@ -200,6 +206,7 @@ export default function App() {
             </CardContent>
           </Card>
         )}
+        
         <div ref={chatRef} />
 
         {/* Search Input Card */}
@@ -211,9 +218,8 @@ export default function App() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSearch} className="flex items-end justify-between gap-2">
+            <form onSubmit={handleSearch} className="flex flex-col gap-4">
               <div className="relative flex-1">
-                {/* Repositioned icon to stick neatly to the top padding lane of textareas */}
                 <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400" />
                 <Textarea
                   placeholder="Ask anything..."
@@ -224,7 +230,8 @@ export default function App() {
                   disabled={isLoading}
                 />
               </div>
-              <Button type="submit" disabled={isLoading} className="min-w-22.5 h-10">
+              <Button type="submit" disabled={isLoading} 
+              className="min-w-full h-10 self-end lg:min-w-32">
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Search"}
               </Button>
             </form>

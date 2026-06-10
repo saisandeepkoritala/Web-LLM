@@ -88,7 +88,7 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-zinc-950 px-4">
       <Card className="w-full max-w-md shadow-lg min-h-125 flex justify-center">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center pt-4">Welcome Back</CardTitle>
           <CardDescription className="text-center">Enter your details to log into your LLM account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
